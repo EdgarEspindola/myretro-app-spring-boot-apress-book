@@ -1,25 +1,27 @@
 package com.example.myretro.board;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Singular;
 
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class RetroBoard {
-
     private UUID id;
-    
-    @NotNull
+
     @NotBlank(message = "A name must be provided")
     private String name;
     
     @Singular
-    private List<Card> cards;
+    private Map<UUID,Card> cards = new HashMap<>();
 }

@@ -18,9 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 public class RetroBoardAdvice {
 
-    @Around("execution(* com.example.myretro.persistence.RetroBoardRepository.findById(java.util.UUID))")
+    @Around("execution(* com.example.myretro.persistence.RetroBoardRepository.findById(..))")
     public Object checkFindRetroBoard(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        log.info("[ADVICE] findRetroBoardById");
+        log.info("[ADVICE] {}", proceedingJoinPoint.getSignature().getName());
         Optional<RetroBoard> retroBoard = (Optional<RetroBoard>) proceedingJoinPoint.proceed(new Object[] {
             UUID.fromString(proceedingJoinPoint.getArgs()[0].toString())
         });

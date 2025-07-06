@@ -4,18 +4,23 @@ import java.util.UUID;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class Card {
     private UUID id;
 
-    @NotBlank(message = "A comment must be provided always")
-    @NotNull
+    @NotBlank
     private String comment;
     
-    @NotNull(message = "A CardType HAPPY|MEH|SAD must be provided")
+    @NotNull
     private CardType cardType;
+    
+    private UUID retroBoardId;
 }

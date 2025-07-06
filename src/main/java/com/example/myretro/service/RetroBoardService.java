@@ -1,67 +1,65 @@
 package com.example.myretro.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
 import com.example.myretro.board.Card;
 import com.example.myretro.board.RetroBoard;
-import com.example.myretro.exception.CardNotFoundException;
-import com.example.myretro.persistence.Repository;
+import com.example.myretro.persistence.SimpleRepository;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
 public class RetroBoardService {
-    Repository<RetroBoard, UUID> repository;
+    SimpleRepository<RetroBoard,UUID> retroBoardRepository;
 
     public RetroBoard save(RetroBoard domain) {
-        if (domain.getCards() == null)
-            domain.setCards(new ArrayList<>());
-        return this.repository.save(domain);
+        return this.retroBoardRepository.save(domain);
     }
 
     public RetroBoard findById(UUID uuid) {
-        return this.repository.findById(uuid).get();
+        return this.retroBoardRepository.findById(uuid).get();
     }
 
     public Iterable<RetroBoard> findAll() {
-        return this.repository.findAll();
+        return this.retroBoardRepository.findAll();
     }
 
     public void delete(UUID uuid) {
-        this.repository.delete(uuid);
+        this.retroBoardRepository.deleteById(uuid);
     }
 
     public Iterable<Card> findAllCardsFromRetroBoard(UUID uuid) {
-        return this.findById(uuid).getCards();
+        return this.findById(uuid).getCards().values();
     }
 
-    public Card addCardToRetroBoard(UUID uuid, Card card) {
-        if (card.getId() == null)
-            card.setId(UUID.randomUUID());
+    public Card addCardToRetroBoard(UUID uuid, Card card){
         RetroBoard retroBoard = this.findById(uuid);
-        List<Card> cardList = new ArrayList<>(retroBoard.getCards());
-        cardList.add(card);
-        retroBoard.setCards(cardList);
+        if (card.getId() == null) {
+            card.setId(UUID.randomUUID());
+        }
+        retroBoard.getCards().put(card.getId(),card);
+        this.save(retroBoard);
         return card;
     }
 
-    public Card findCardByUUIDFromRetroBoard(UUID uuid, UUID uuidCard){
+    public Card findCardByUUID(UUID  uuid,UUID uuidCard){
         RetroBoard retroBoard = this.findById(uuid);
-        Optional<Card> card = retroBoard.getCards().stream().filter(c -> c.getId().equals(uuidCard)).findFirst();
-        if (card.isPresent())
-            return card.get();
-        throw new CardNotFoundException();
+        return retroBoard.getCards().get(uuidCard);
     }
-    public void removeCardFromRetroBoard(UUID uuid, UUID cardUUID){
+
+    public Card saveCard(UUID  uuid,Card card){
         RetroBoard retroBoard = this.findById(uuid);
-        List<Card> cardList = new ArrayList<>(retroBoard.getCards());
-        cardList.removeIf(card -> card.getId().equals(cardUUID));
-        retroBoard.setCards(cardList);
+        retroBoard.getCards().put(card.getId(),card);
+        this.save(retroBoard);
+        return card;
+    }
+    
+    public void removeCardByUUID(UUID uuid,UUID cardUUID){
+        RetroBoard retroBoard = this.findById(uuid);
+        retroBoard.getCards().remove(cardUUID);
+        this.save(retroBoard);
     }
 }

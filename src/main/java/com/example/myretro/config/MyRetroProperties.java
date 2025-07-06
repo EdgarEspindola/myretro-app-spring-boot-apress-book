@@ -7,5 +7,5 @@ import lombok.Data;
 @ConfigurationProperties(prefix="service")
 @Data
 public class MyRetroProperties {
-    UsersConfiguration users;
+    UsersProperties users;
 }
