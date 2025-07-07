@@ -6,14 +6,13 @@ import org.springframework.stereotype.Service;
 
 import com.example.myretro.board.Card;
 import com.example.myretro.board.RetroBoard;
-import com.example.myretro.persistence.SimpleRepository;
-
+import com.example.myretro.persistence.RetroBoardRepository;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
 public class RetroBoardService {
-    SimpleRepository<RetroBoard,UUID> retroBoardRepository;
+    RetroBoardRepository retroBoardRepository;
 
     public RetroBoard save(RetroBoard domain) {
         return this.retroBoardRepository.save(domain);

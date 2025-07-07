@@ -2,6 +2,11 @@ package com.example.myretro.board;
 
 import java.util.UUID;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -13,7 +18,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Table
 public class Card {
+    @Id
     private UUID id;
 
     @NotBlank
@@ -22,5 +29,6 @@ public class Card {
     @NotNull
     private CardType cardType;
     
+    @JsonIgnore
     private UUID retroBoardId;
 }
