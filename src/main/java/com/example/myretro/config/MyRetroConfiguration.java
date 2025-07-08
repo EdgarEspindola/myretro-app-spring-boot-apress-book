@@ -1,6 +1,7 @@
 package com.example.myretro.config;
 
-import java.util.ArrayList;
+import java.util.UUID;
+
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationListener;
@@ -18,17 +19,15 @@ public class MyRetroConfiguration {
     @Bean
     ApplicationListener<ApplicationReadyEvent> ready(RetroBoardService retroBoardService) {
         return applicationReadyEvent -> {
-            RetroBoard retroBoard = retroBoardService.save(RetroBoard.builder()
-                //.id(UUID.fromString("9DC9B71B-A07E-418B-B972-40225449AFF2"))
-                .name("Spring Boot Conference")
-                .build());
-
-            retroBoardService.addMultipleCardsToRetroBoard(retroBoard.getId(),new ArrayList<>() {{
-                add(Card.builder().comment("Spring Boot Rocks!").cardType(CardType.HAPPY).build());
-                add(Card.builder().comment("Meet everyone in person").cardType(CardType.HAPPY).build());
-                add(Card.builder().comment("When is the next one?").cardType(CardType.MEH).build());
-                add(Card.builder().comment("Not enough time to talk to everyone").cardType(CardType.SAD).build());
-            }});
+             UUID retroBoardId = UUID.fromString("9dc9b71b-a07e-418b-b972-40225449aff2");
+            retroBoardService.save(RetroBoard.builder()
+                    .id(retroBoardId)
+                    .name("Spring Boot Conference")
+                            .card(Card.builder().id(UUID.fromString("bb2a80a5-a0f5-4180-a6dc-80c84bc014c9")).comment("Spring Boot Rocks!").cardType(CardType.HAPPY).build())
+                            .card(Card.builder().id(UUID.randomUUID()).comment("Meet everyone in person").cardType(CardType.HAPPY).build())
+                            .card(Card.builder().id(UUID.randomUUID()).comment("When is the next one?").cardType(CardType.MEH).build())
+                            .card(Card.builder().id(UUID.randomUUID()).comment("Not enough time to talk to everyone").cardType(CardType.SAD).build())
+                    .build());
         };
     }
 }

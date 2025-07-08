@@ -11,7 +11,6 @@ import com.example.myretro.board.CardType;
 import com.example.myretro.board.RetroBoard;
 import com.example.myretro.exception.CardNotFoundException;
 import com.example.myretro.exception.RetroBoardNotFoundException;
-import com.example.myretro.persistence.RetroBoardRepository;
 import com.example.myretro.service.RetroBoardService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,9 +21,6 @@ public class MyretroApplicationTests {
 
     @Autowired
     RetroBoardService service;
-
-    @Autowired
-    RetroBoardRepository repository;
 
     UUID retroBoardUUID = UUID.fromString("9DC9B71B-A07E-418B-B972-40225449AFF2");
     UUID cardUUID = UUID.fromString("BB2A80A5-A0F5-4180-A6DC-80C84BC014C9");
@@ -86,7 +82,7 @@ public class MyretroApplicationTests {
     
     @Test
     void removeCardsFromRetroBoardTest(){
-        service.removeCardByUUID(cardUUID);
+        service.removeCardByUUID(retroBoardUUID, cardUUID);
         RetroBoard retroBoard = service.findById(retroBoardUUID);
         assertThat(retroBoard).isNotNull();
         assertThat(retroBoard.getCards()).isNotEmpty();
@@ -95,7 +91,7 @@ public class MyretroApplicationTests {
     
     @Test
     void findCardByIdInRetroBoardTesT(){
-        Card card = service.findCardByUUID(mehCardUUID);
+        Card card = service.findCardByUUID(retroBoardUUID, mehCardUUID);
         assertThat(card).isNotNull();
         assertThat(card.getId()).isEqualTo(mehCardUUID);
     }
@@ -103,7 +99,7 @@ public class MyretroApplicationTests {
     @Test
     void notFoundCardInRetroBoardTest() {
         assertThatThrownBy(() -> {
-            service.findCardByUUID(UUID.randomUUID());
+            service.findCardByUUID(retroBoardUUID, UUID.randomUUID());
         }).isInstanceOf(CardNotFoundException.class);
     }
 }
