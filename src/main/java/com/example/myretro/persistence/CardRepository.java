@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.myretro.board.RetroBoard;
+import com.example.myretro.board.Card;
 
+public interface CardRepository extends JpaRepository<Card, UUID> {
 
-public interface RetroBoardRepository extends JpaRepository<RetroBoard, UUID> {
 }

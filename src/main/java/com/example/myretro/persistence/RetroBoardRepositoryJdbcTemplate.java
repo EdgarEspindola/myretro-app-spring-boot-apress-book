@@ -11,18 +11,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.myretro.board.Card;
-import com.example.myretro.board.RetroBoard;
+import com.example.myretro.board.CardDataJdbc;
+import com.example.myretro.board.RetroBoardDataJdbc;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Repository
-public class RetroBoardRepositoryJdbcTemplate implements SimpleRepository<RetroBoard, UUID> {
+public class RetroBoardRepositoryJdbcTemplate implements SimpleRepository<RetroBoardDataJdbc, UUID> {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public Optional<RetroBoard> findById(UUID uuid) {
+    public Optional<RetroBoardDataJdbc> findById(UUID uuid) {
         String sql = """
                 SELECT r.ID AS id, r.NAME, c.ID AS card_id, c.CARD_TYPE AS card_type, c.COMMENT AS comment
                 FROM RETRO_BOARD r
@@ -30,12 +30,12 @@ public class RetroBoardRepositoryJdbcTemplate implements SimpleRepository<RetroB
                 WHERE r.ID = ?
                 """;
 
-        List<RetroBoard> results = jdbcTemplate.query(sql, new Object[]{uuid}, new int[]{Types.OTHER}, new RetroBoardRowMapperJdbcTemplate());
+        List<RetroBoardDataJdbc> results = jdbcTemplate.query(sql, new Object[]{uuid}, new int[]{Types.OTHER}, new RetroBoardRowMapperJdbcTemplate());
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
 
     @Override
-    public Iterable<RetroBoard> findAll() {
+    public Iterable<RetroBoardDataJdbc> findAll() {
         String sql = """
                 SELECT r.ID AS id, r.NAME, c.ID AS card_id, c.CARD_TYPE, c.COMMENT
                 FROM RETRO_BOARD r
@@ -47,14 +47,14 @@ public class RetroBoardRepositoryJdbcTemplate implements SimpleRepository<RetroB
 
     @Override
     @Transactional
-    public RetroBoard save(RetroBoard retroBoard) {
+    public RetroBoardDataJdbc save(RetroBoardDataJdbc retroBoard) {
         if (retroBoard.getId() == null) {
             retroBoard.setId(UUID.randomUUID());
         }
         String sql = "INSERT INTO RETRO_BOARD(ID, NAME) VALUES(?, ?)";
         jdbcTemplate.update(sql, retroBoard.getId(), retroBoard.getName());
-        Map<UUID, Card> mutableMap = new HashMap<>(retroBoard.getCards());
-        for (Card card : retroBoard.getCards().values()) {
+        Map<UUID, CardDataJdbc> mutableMap = new HashMap<>(retroBoard.getCards());
+        for (CardDataJdbc card : retroBoard.getCards().values()) {
             card.setRetroBoardId(retroBoard.getId());
             card = saveCard(card);
             mutableMap.put(card.getId(), card);
@@ -72,7 +72,7 @@ public class RetroBoardRepositoryJdbcTemplate implements SimpleRepository<RetroB
         jdbcTemplate.update(sql, uuid);
     }
 
-    private Card saveCard(Card card) {
+    private CardDataJdbc saveCard(CardDataJdbc card) {
         if (card.getId() == null) {
             card.setId(UUID.randomUUID());
         }

@@ -2,24 +2,19 @@ package com.example.myretro.board;
 
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table
+@Entity
 public class Card {
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     private UUID id;
 
@@ -27,8 +22,11 @@ public class Card {
     private String comment;
     
     @NotNull
+    @Enumerated(EnumType.STRING)
     private CardType cardType;
     
+    @ManyToOne
+    @JoinColumn(name = "retro_board_id")
     @JsonIgnore
-    private UUID retroBoardId;
+    RetroBoard retroBoard;
 }
